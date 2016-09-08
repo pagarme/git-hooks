@@ -6,7 +6,9 @@
 #
 # see the README
 
-PHPCS_BIN=/usr/bin/phpcs
+PHPCS_BIN=vendor/bin/phpcs
+PWD=$(pwd)
+DOCKER_RUN="docker run --rm -v ${PWD}:/code -w /code php:5.6 vendor/bin/phpcs"
 PHPCS_CODING_STANDARD=PEAR
 PHPCS_IGNORE=
 TMP_STAGING=".tmp_staging"
@@ -18,9 +20,9 @@ if [ -e $CONFIG_FILE ]; then
 fi
 
 # simple check if code sniffer is set up correctly
-if [ ! -x $PHPCS_BIN ]; then
-    echo "PHP CodeSniffer bin not found or executable -> $PHPCS_BIN"
-    exit 1
+if [ ! -x "$PHPCS_BIN" ]; then
+   echo "PHP CodeSniffer bin not found or executable -> $PHPCS_BIN"
+   exit 1
 fi
 
 # stolen from template file
@@ -37,7 +39,7 @@ fi
 # but no deletions etc
 FILES=$(git diff-index --name-only --cached --diff-filter=ACMR $against -- )
 
-if [ "$FILES" == "" ]; then
+if [ "$FILES" = "" ]; then
     exit 0
 fi
 
@@ -59,7 +61,7 @@ do
     fi
 done
 
-if [ "$FILES_TO_CHECK" == "" ]; then
+if [ "$FILES_TO_CHECK" = "" ]; then
     exit 0
 fi
 
@@ -82,7 +84,7 @@ else
     ENCODING=""
 fi
 
-if [ "$PHPCS_IGNORE_WARNINGS" == "1" ]; then
+if [ "$PHPCS_IGNORE_WARNINGS" = "1" ]; then
     IGNORE_WARNINGS="-n"
 else
     IGNORE_WARNINGS=""
@@ -103,9 +105,8 @@ do
   STAGED_FILES="$STAGED_FILES $TMP_STAGING/$FILE"
 done
 
-OUTPUT=$($PHPCS_BIN -s $IGNORE_WARNINGS --standard=$PHPCS_CODING_STANDARD $ENCODING $IGNORE $SNIFFS $STAGED_FILES)
+OUTPUT=$($DOCKER_RUN $PHPCS_BIN -s $IGNORE_WARNINGS --standard=$PHPCS_CODING_STANDARD $ENCODING $IGNORE $SNIFFS $STAGED_FILES)
 RETVAL=$?
-
 # delete temporary copy of staging area
 rm -rf $TMP_STAGING
 
@@ -114,3 +115,4 @@ if [ $RETVAL -ne 0 ]; then
 fi
 
 exit $RETVAL
+
