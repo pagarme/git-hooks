@@ -1,0 +1,8 @@
+{
+    "name": "s0enke/git-hooks",
+    "description": "PHPCS hook",
+    "type": "lib",
+    "require": {
+        "squizlabs/php_codesniffer": "2.*"
+    }
+}
