@@ -9,7 +9,7 @@
 PHPCS_BIN=vendor/bin/phpcs
 PWD=$(pwd)
 DOCKER_RUN="docker run --rm -v ${PWD}:/code -w /code php:5.6 vendor/bin/phpcs"
-PHPCS_CODING_STANDARD=PEAR
+PHPCS_CODING_STANDARD=PSR2
 PHPCS_IGNORE=
 TMP_STAGING=".tmp_staging"
 
